@@ -1,0 +1,33 @@
+name: Run GTest Automatically
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ libgtest-dev
+          cd /usr/src/gtest
+          sudo cmake .
+          sudo make
+          sudo cp lib/*.a /usr/lib
+
+      - name: Build project
+        run: |
+          mkdir build && cd build
+          cmake ..
+          make
+
+      - name: Run tests
+        run: |
+          cd build
+          ctest --output-on-failure
