@@ -3,16 +3,16 @@ name: Run GTest Automatically
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install dependencies (cmake, g++, libgtest)
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake g++ libgtest-dev
@@ -21,11 +21,12 @@ jobs:
           sudo make
           sudo cp lib/*.a /usr/lib
 
-      - name: Build project
+      - name: Configure & Build
         run: |
-          mkdir build && cd build
+          mkdir build
+          cd build
           cmake ..
-          make
+          make -j
 
       - name: Run tests
         run: |
