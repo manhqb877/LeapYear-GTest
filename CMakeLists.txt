@@ -1,25 +1,24 @@
 ﻿cmake_minimum_required(VERSION 3.10)
 project(LeapYearGTest LANGUAGES CXX)
 
-# Bật testing
 enable_testing()
 
-# Tìm GTest (CMake cung cấp target GTest::GTest và GTest::Main khi package tìm thấy)
+# Tìm GoogleTest (đảm bảo đã cài)
 find_package(GTest REQUIRED)
 
-# Add executable cho test (bao gồm cả code chính và test)
+# Add target cho test
 add_executable(runTests
     LeapYearLib/LeapYear.cpp
     LeapYearTest/LeapYearTest.cpp
 )
 
-# Link thư viện GTest::GTest và GTest::Main. GTest::Main chứa hàm main() cho tests.
-# Trên Linux cần pthread; trên Windows thì pthread không cần.
+# Liên kết thư viện GTest + GTest Main (thư viện chứa hàm main())
+# Trên Linux cần pthread; trên Windows có thể bỏ.
 if(UNIX)
     target_link_libraries(runTests PRIVATE GTest::GTest GTest::Main pthread)
 else()
     target_link_libraries(runTests PRIVATE GTest::GTest GTest::Main)
 endif()
 
-# Thêm test cho ctest
+# Đăng ký test cho ctest
 add_test(NAME RunAllTests COMMAND runTests)
